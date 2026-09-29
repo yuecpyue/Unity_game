@@ -1,0 +1,30 @@
+/[L-l]ibrary/
+/[T]emp/
+/[O]bj/
+/[B]uild/
+/[B]uilds/
+/[L]ogs/
+/[U]ser[S]ettings/
+/[M]emoryCaptures/
+
+# Asset store packages
+/[A]ssets/AssetStoreTools*
+
+# Visual Studio / Rider / VS Code 快取
+.vs/
+.idea/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.opendb
+
+# OS 暫存檔
+.DS_Store
+Thumbs.db
