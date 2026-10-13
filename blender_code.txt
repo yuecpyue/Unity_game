@@ -1,0 +1,131 @@
+import bpy
+import os
+import sys
+
+    # ==========================================
+    # 參數設定（若直接在 Blender 內部執行，請在此修改路徑）
+    # ==========================================
+DEFAULT_INPUT_DIR = r"C:\Users\Administrator\Desktop\Unity_game\3d_game\Assets\model"    # 存放原始 FBX 的資料夾
+DEFAULT_OUTPUT_DIR = r"C:\Users\Administrator\Desktop\Unity_game\3d_game\Assets\model_output"  # 匯出目標資料夾
+DECIMATE_RATIO = 0.30                         # 減面比例 (0.15 = 保留 15% 面數)
+
+
+def parse_arguments():
+    """支援命令列引數傳遞：blender -b -P script.py -- <input_dir> <output_dir> [ratio]"""
+    input_dir = DEFAULT_INPUT_DIR
+    output_dir = DEFAULT_OUTPUT_DIR
+    ratio = DECIMATE_RATIO
+
+    if "--" in sys.argv:
+        args = sys.argv[sys.argv.index("--") + 1:]
+        if len(args) >= 1:
+            input_dir = args[0]
+        if len(args) >= 2:
+            output_dir = args[1]
+        if len(args) >= 3:
+            ratio = float(args[2])
+
+    return input_dir, output_dir, ratio
+
+
+def clear_scene():
+    """徹底清除場景中所有物件與暫存資料塊，防止記憶體洩漏與檔案混雜"""
+    # 切換至 OBJECT 模式
+    if bpy.context.object and bpy.context.object.mode != 'OBJECT':
+        bpy.ops.object.mode_set(mode='OBJECT')
+
+    # 刪除所有物件
+    for obj in list(bpy.data.objects):
+        bpy.data.objects.remove(obj, do_unlink=True)
+
+    # 清除孤立資料塊 (Mesh, Material, Armature, etc.)
+    for block_type in (bpy.data.meshes, bpy.data.materials, bpy.data.armatures, bpy.data.images):
+        for block in list(block_type):
+            if block.users == 0:
+                block_type.remove(block)
+
+
+def apply_decimate_to_meshes(ratio):
+    """為場景中所有 Mesh 物件新增並套用 Decimate 減面修改器"""
+    mesh_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'MESH']
+
+    for obj in mesh_objects:
+        # 建立 Decimate 修改器
+        mod = obj.modifiers.new(name="Auto_Decimate", type='DECIMATE')
+        mod.decimate_type = 'COLLAPSE'
+        mod.ratio = ratio
+
+        # 選取並設定為 Active 物件以套用修改器
+        bpy.ops.object.select_all(action='DESELECT')
+        obj.select_set(True)
+        bpy.context.view_layer.objects.active = obj
+
+        try:
+            # 支援 Blender 3.2+ / 4.x / 5.x 的 temp_override 避免背景模式上下文異常
+            with bpy.context.temp_override(active_object=obj, object=obj, selected_editable_objects=[obj]):
+                bpy.ops.object.modifier_apply(modifier=mod.name)
+            print(f"  [v] 已成功套用 Decimate 至: {obj.name}")
+        except Exception as e:
+            # 若 Mesh 包含 Shape Keys，Blender 原生限制無法直接套用修改器
+            print(f"  [!] 無法套用修改器至 {obj.name}: {e}")
+
+
+def process_fbx_files():
+    input_dir, output_dir, ratio = parse_arguments()
+
+    if not os.path.exists(input_dir):
+        print(f"[錯誤] 輸入資料夾不存在: {input_dir}")
+        return
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    # 搜尋所有 .fbx 檔案
+    fbx_files = [f for f in os.listdir(input_dir) if f.lower().endswith('.fbx')]
+
+    if not fbx_files:
+        print(f"[提示] 資料夾中未找到任何 FBX 檔案: {input_dir}")
+        return
+
+    print(f"開始批次處理，共找到 {len(fbx_files)} 個 FBX 檔案...")
+    print(f"輸入目錄: {input_dir}")
+    print(f"輸出目錄: {output_dir}")
+    print(f"減面比率: {ratio}\n" + "-" * 50)
+
+    for index, filename in enumerate(fbx_files, start=1):
+        in_path = os.path.join(input_dir, filename)
+        out_path = os.path.join(output_dir, filename)
+
+        print(f"[{index}/{len(fbx_files)}] 正在處理: {filename}")
+
+        # 1. 清空場景
+        clear_scene()
+
+        # 2. 匯入 FBX
+        try:
+            bpy.ops.import_scene.fbx(filepath=in_path)
+        except Exception as e:
+            print(f"  [x] 匯入失敗: {e}")
+            continue
+
+        # 3. 套用 Decimate 修改器
+        apply_decimate_to_meshes(ratio)
+
+        # 4. 匯出 FBX
+        try:
+            bpy.ops.export_scene.fbx(
+                filepath=out_path,
+                use_selection=False,       # 匯出場景中全部處理後的物件
+                apply_scale_options='FBX_SCALE_NONE',
+                bake_space_transform=False
+            )
+            print(f"  [v] 匯出完成 -> {out_path}\n")
+        except Exception as e:
+            print(f"  [x] 匯出失敗: {e}\n")
+
+    # 最後再清空一次場景
+    clear_scene()
+    print("-" * 50 + "\n所有 FBX 批次處理完成！")
+
+
+if __name__ == "__main__":
+    process_fbx_files()
