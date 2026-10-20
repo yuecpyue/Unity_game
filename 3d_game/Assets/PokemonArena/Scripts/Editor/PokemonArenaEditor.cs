@@ -32,7 +32,7 @@ namespace PokemonArena
                 if (existingPlayer == null)
                 {
                     Debug.Log("<color=#4CAF50><b>[Pokemon Arena]</b> Adding Chara2 Player with WASD controls to scene...</color>");
-                    AddChara2ToScene(saveScene: true);
+                    FastRunCharacterSetup.SwitchToFastRunInCurrentScene(saveScene: true);
                 }
             }
         }
@@ -69,9 +69,9 @@ namespace PokemonArena
             }
 
             GUI.backgroundColor = new Color(0.2f, 0.7f, 1.0f);
-            if (GUILayout.Button("🎮 Add / Respawn Chara2 Player (WASD)", GUILayout.Height(32)))
+            if (GUILayout.Button("🏃 Add / Respawn Fast Run Player (WASD)", GUILayout.Height(32)))
             {
-                AddChara2ToScene(saveScene: true);
+                FastRunCharacterSetup.SwitchToFastRunInCurrentScene(saveScene: true);
             }
 
             GUI.backgroundColor = Color.white;
@@ -113,18 +113,18 @@ namespace PokemonArena
             GenerateArenaInSceneInternal(saveSceneAndPrefab: true);
         }
 
-        [MenuItem("Tools/Pokemon Arena/🎮 Add Playable Chara2 to Scene (WASD)", false, 2)]
+        [MenuItem("Tools/Pokemon Arena/🏃 Add Playable Fast Run Player to Scene (WASD)", false, 2)]
         public static void AddChara2Menu()
         {
-            AddChara2ToScene(saveScene: true);
+            FastRunCharacterSetup.SwitchToFastRunInCurrentScene(saveScene: true);
         }
 
-        [MenuItem("Tools/Pokemon Arena/🚀 Setup Full Arena + Chara2 Scene", false, 0)]
+        [MenuItem("Tools/Pokemon Arena/🚀 Setup Full Arena + Fast Run Scene", false, 0)]
         public static void SetupFullSceneWithCharacter()
         {
             GameObject arenaGo = GenerateArenaInSceneInternal(saveSceneAndPrefab: true);
-            AddChara2ToScene(saveScene: true);
-            Debug.Log("<color=#4CAF50><b>[Pokemon Arena]</b> Full Scene with Battle Arena and Chara2 Player successfully set up!</color>");
+            FastRunCharacterSetup.SwitchToFastRunInCurrentScene(saveScene: true);
+            Debug.Log("<color=#4CAF50><b>[Pokemon Arena]</b> Full Scene with Battle Arena and Fast Run Player successfully set up!</color>");
         }
 
         public static GameObject AddChara2ToScene(bool saveScene)

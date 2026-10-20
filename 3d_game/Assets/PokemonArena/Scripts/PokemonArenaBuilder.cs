@@ -717,6 +717,7 @@ namespace PokemonArena
 #if UNITY_EDITOR
             string[] possiblePaths = new string[]
             {
+                "Assets/model/Fast Run.fbx",
                 "Assets/model/charach.fbx",
                 "Assets/model/chara2.fbx"
             };

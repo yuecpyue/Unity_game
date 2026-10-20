@@ -20,7 +20,7 @@ namespace PokemonArena
 
         [Header("Model Orientation Offset")]
         [Tooltip("Orientation offset for models imported with axis differences (e.g. -90 on X for Blender/FBX models)")]
-        public Vector3 rotationOffset = new Vector3(-90f, 0f, 0f);
+        public Vector3 rotationOffset = Vector3.zero;
 
         [Header("Animation (Optional)")]
         public Animator animator;
