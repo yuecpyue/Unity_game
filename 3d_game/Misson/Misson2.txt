@@ -1,0 +1,4 @@
+1.建空物件 Selector → 掛 ClickSelector
+2.GameObject → UI → Text - TextMeshPro(跳出提示按 Import)
+3.把文字物件拖進 ClickSelector 的 infoText 欄位
+4.掃描物件加 Box Collider + 掛 InfoTag 填資料 → ▶ Play

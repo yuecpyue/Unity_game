@@ -1,0 +1,5 @@
+「Unity 6.3,C#,新版 Input System。寫兩個 MonoBehaviour:
+① InfoTag:掛在物件上,有 title、description 兩個可編輯字串
+② ClickSelector:左鍵點到有 Collider 的物件,若有 InfoTag 就變黃色高亮,並把資訊顯示在 TextMeshProUGUI;再點一次同物件取消;點別的先還原前一個;點空白也取消。」
+
+建立 InfoTag、ClickSelector 兩個腳本(檔名 = class 名)
