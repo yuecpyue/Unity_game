@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+﻿#if UNITY_EDITOR
 using System.IO;
 using UnityEditor;
 using UnityEditor.Animations;
@@ -17,20 +17,6 @@ namespace PokemonArena
         private const string TexturePath = "Assets/model/Meshy_AI_Demon_Marked_Warrior_1020062346_texture.png";
         private const string NormalTexturePath = "Assets/model/Meshy_AI_Demon_Marked_Warrior_1020062346_texture_normal.png";
 
-        static FastRunCharacterSetup()
-        {
-            EditorApplication.delayCall += OnEditorStartup;
-        }
-
-        private static void OnEditorStartup()
-        {
-            PlayerMovement pm = Object.FindFirstObjectByType<PlayerMovement>();
-            if (pm == null || pm.gameObject.name != "FastRun_Player")
-            {
-                Debug.Log("<color=#2196F3><b>[Fast Run Setup]</b> Initializing Fast Run FBX model and player...</color>");
-                SwitchToFastRunInCurrentScene(saveScene: true);
-            }
-        }
 
         [MenuItem("Tools/Pokemon Arena/🏃 Switch Player to Fast Run FBX (Current Scene)", false, 1)]
         public static void SwitchToFastRunMenu()

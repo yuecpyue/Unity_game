@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+﻿#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -32,7 +32,7 @@ namespace PokemonArena
                 if (existingPlayer == null)
                 {
                     Debug.Log("<color=#4CAF50><b>[Pokemon Arena]</b> Adding Chara2 Player with WASD controls to scene...</color>");
-                    FastRunCharacterSetup.SwitchToFastRunInCurrentScene(saveScene: true);
+                    SevenBoneCharacterSetup.SetupSevenBonePlayerInCurrentScene(saveScene: true);
                 }
             }
         }
@@ -71,7 +71,7 @@ namespace PokemonArena
             GUI.backgroundColor = new Color(0.2f, 0.7f, 1.0f);
             if (GUILayout.Button("🏃 Add / Respawn Fast Run Player (WASD)", GUILayout.Height(32)))
             {
-                FastRunCharacterSetup.SwitchToFastRunInCurrentScene(saveScene: true);
+                SevenBoneCharacterSetup.SetupSevenBonePlayerInCurrentScene(saveScene: true);
             }
 
             GUI.backgroundColor = Color.white;
@@ -116,14 +116,14 @@ namespace PokemonArena
         [MenuItem("Tools/Pokemon Arena/🏃 Add Playable Fast Run Player to Scene (WASD)", false, 2)]
         public static void AddChara2Menu()
         {
-            FastRunCharacterSetup.SwitchToFastRunInCurrentScene(saveScene: true);
+            SevenBoneCharacterSetup.SetupSevenBonePlayerInCurrentScene(saveScene: true);
         }
 
         [MenuItem("Tools/Pokemon Arena/🚀 Setup Full Arena + Fast Run Scene", false, 0)]
         public static void SetupFullSceneWithCharacter()
         {
             GameObject arenaGo = GenerateArenaInSceneInternal(saveSceneAndPrefab: true);
-            FastRunCharacterSetup.SwitchToFastRunInCurrentScene(saveScene: true);
+            SevenBoneCharacterSetup.SetupSevenBonePlayerInCurrentScene(saveScene: true);
             Debug.Log("<color=#4CAF50><b>[Pokemon Arena]</b> Full Scene with Battle Arena and Fast Run Player successfully set up!</color>");
         }
 

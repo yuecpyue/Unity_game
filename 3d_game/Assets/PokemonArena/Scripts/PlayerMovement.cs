@@ -28,6 +28,7 @@ namespace PokemonArena
         private CharacterController controller;
         private Vector3 verticalVelocity = Vector3.zero;
         private bool isGrounded;
+        private float waveTimer = 0f;
 
         private void Awake()
         {
@@ -68,7 +69,22 @@ namespace PokemonArena
             bool isSprinting = ReadSprintInput();
             float currentSpeed = (isSprinting && inputDir.magnitude > 0.1f) ? runSpeed : walkSpeed;
 
-            // 3. Direction relative to Camera or World
+            // 3. Waving (F / V)
+            if (ReadWaveInput() && isGrounded)
+            {
+                waveTimer = 2.8f;
+            }
+
+            if (inputDir.magnitude > 0.05f || !isGrounded)
+            {
+                waveTimer = 0f;
+            }
+            else if (waveTimer > 0f)
+            {
+                waveTimer -= Time.deltaTime;
+            }
+
+            // 4. Direction relative to Camera or World
             Vector3 moveDirection = Vector3.zero;
             if (inputDir.magnitude > 0.05f)
             {
@@ -95,22 +111,23 @@ namespace PokemonArena
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
             }
 
-            // 4. Horizontal Movement
+            // 5. Horizontal Movement
             Vector3 motion = moveDirection * currentSpeed;
 
-            // 5. Jump & Gravity
+            // 6. Jump & Gravity
             if (ReadJumpInput() && isGrounded)
             {
                 verticalVelocity.y = Mathf.Sqrt(jumpHeight * 2f * gravity);
+                waveTimer = 0f;
             }
 
             verticalVelocity.y -= gravity * Time.deltaTime;
             motion += verticalVelocity;
 
-            // 6. Apply Movement
+            // 7. Apply Movement
             controller.Move(motion * Time.deltaTime);
 
-            // 7. Update Animator if available
+            // 8. Update Animator if available
             UpdateAnimator(inputDir.magnitude * (isSprinting ? 2f : 1f));
         }
 
@@ -181,19 +198,58 @@ namespace PokemonArena
 #endif
         }
 
+        private bool ReadWaveInput()
+        {
+#if ENABLE_INPUT_SYSTEM
+            var kb = Keyboard.current;
+            if (kb != null && (kb.fKey.wasPressedThisFrame || kb.vKey.wasPressedThisFrame)) return true;
+
+            var gp = Gamepad.current;
+            if (gp != null && gp.buttonNorth.wasPressedThisFrame) return true;
+
+            return false;
+#elif ENABLE_LEGACY_INPUT_MANAGER
+            return Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.V);
+#else
+            return false;
+#endif
+        }
+
         private void UpdateAnimator(float speedValue)
         {
             if (animator == null || animator.runtimeAnimatorController == null) return;
-            animator.SetFloat("Speed", speedValue);
+
+            bool isMoving = speedValue > 0.1f;
+            bool isRunning = speedValue > 1.1f;
+            bool isWalking = isMoving && !isRunning;
+            bool isJumping = !isGrounded;
+            bool isWaving = waveTimer > 0f;
+
             foreach (var param in animator.parameters)
             {
-                if (param.name == "Speed" && param.type == AnimatorControllerParameterType.Float)
+                if (param.name == "IsWalking" && param.type == AnimatorControllerParameterType.Bool)
+                {
+                    animator.SetBool("IsWalking", isWalking);
+                }
+                else if (param.name == "IsRunning" && param.type == AnimatorControllerParameterType.Bool)
+                {
+                    animator.SetBool("IsRunning", isRunning);
+                }
+                else if (param.name == "IsJumping" && param.type == AnimatorControllerParameterType.Bool)
+                {
+                    animator.SetBool("IsJumping", isJumping);
+                }
+                else if (param.name == "IsWaving" && param.type == AnimatorControllerParameterType.Bool)
+                {
+                    animator.SetBool("IsWaving", isWaving);
+                }
+                else if (param.name == "Speed" && param.type == AnimatorControllerParameterType.Float)
                 {
                     animator.SetFloat("Speed", speedValue);
                 }
                 else if (param.name == "IsMoving" && param.type == AnimatorControllerParameterType.Bool)
                 {
-                    animator.SetBool("IsMoving", speedValue > 0.1f);
+                    animator.SetBool("IsMoving", isMoving);
                 }
                 else if (param.name == "MoveSpeed" && param.type == AnimatorControllerParameterType.Float)
                 {
@@ -208,10 +264,11 @@ namespace PokemonArena
 
         private void OnGUI()
         {
-            GUILayout.BeginArea(new Rect(15, Screen.height - 95, 260, 80), GUI.skin.box);
+            GUILayout.BeginArea(new Rect(15, Screen.height - 110, 320, 95), GUI.skin.box);
             GUILayout.Label("<b>Player Controls</b>");
-            GUILayout.Label("• <b>WASD / Arrows</b>: Move Character");
-            GUILayout.Label("• <b>Shift</b>: Sprint | <b>Space</b>: Jump");
+            GUILayout.Label("• <b>WASD / Arrows</b>: Walk");
+            GUILayout.Label("• <b>Shift + Move</b>: Run | <b>Space</b>: Jump");
+            GUILayout.Label("• <b>F / V</b>: Waving (挥手動作)");
             GUILayout.EndArea();
         }
     }
