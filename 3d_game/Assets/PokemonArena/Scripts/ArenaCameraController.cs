@@ -36,6 +36,9 @@ namespace PokemonArena
         public float orbitHeight = 16.0f;
         public float orbitSpeed = 15.0f;
 
+        [Header("Debug UI")]
+        public bool showCameraUI = false;
+
         private float currentOrbitAngle = 0f;
         private Vector3 targetPosition;
         private Quaternion targetRotation;
@@ -48,10 +51,10 @@ namespace PokemonArena
 
         public void FindReferences()
         {
-            if (playerTarget == null)
+            if (playerTarget == null || !playerTarget.gameObject.activeInHierarchy)
             {
                 PlayerMovement pm = FindFirstObjectByType<PlayerMovement>();
-                if (pm != null) playerTarget = pm.transform;
+                if (pm != null && pm.gameObject.activeInHierarchy) playerTarget = pm.transform;
             }
 
             if (arenaCenter == null)
@@ -61,15 +64,24 @@ namespace PokemonArena
             }
         }
 
+        public void SetTarget(Transform newTarget, bool forceFollow = true)
+        {
+            playerTarget = newTarget;
+            if (forceFollow)
+            {
+                SetMode(CameraMode.FollowPlayer);
+            }
+        }
+
         private void Update()
         {
-            if (playerTarget == null)
+            if (playerTarget == null || !playerTarget.gameObject.activeInHierarchy)
             {
                 PlayerMovement pm = FindFirstObjectByType<PlayerMovement>();
-                if (pm != null) playerTarget = pm.transform;
+                if (pm != null && pm.gameObject.activeInHierarchy) playerTarget = pm.transform;
             }
 
-            // Keyboard Shortcuts compatible with New Input System
+            // Keyboard Shortcuts compatible with New Input System (Uses F1-F6 to avoid conflict with gameplay/character switcher)
             CheckShortcuts();
 
             Vector3 center = arenaCenter != null ? arenaCenter.position : Vector3.zero;
@@ -77,12 +89,13 @@ namespace PokemonArena
             switch (currentMode)
             {
                 case CameraMode.FollowPlayer:
-                    if (playerTarget != null)
+                    if (playerTarget != null && playerTarget.gameObject.activeInHierarchy)
                     {
                         Vector3 playerFwd = GetPlayerFacing(playerTarget);
+                        float lookAtY = (playerTarget.name.ToLower().Contains("forg") || playerTarget.name.ToLower().Contains("frog")) ? 0.7f : 1.4f;
                         Vector3 behind = playerTarget.position - playerFwd * followDistance + Vector3.up * followHeight;
                         targetPosition = behind;
-                        targetRotation = Quaternion.LookRotation((playerTarget.position + Vector3.up * 1.4f) - targetPosition);
+                        targetRotation = Quaternion.LookRotation((playerTarget.position + Vector3.up * lookAtY) - targetPosition);
                     }
                     else
                     {
@@ -134,20 +147,20 @@ namespace PokemonArena
             var kb = Keyboard.current;
             if (kb != null)
             {
-                if (kb.cKey.wasPressedThisFrame) SetMode(CameraMode.FollowPlayer);
-                if (kb.digit1Key.wasPressedThisFrame || kb.numpad1Key.wasPressedThisFrame) SetMode(CameraMode.Broadcast);
-                if (kb.digit2Key.wasPressedThisFrame || kb.numpad2Key.wasPressedThisFrame) SetMode(CameraMode.Trainer1);
-                if (kb.digit3Key.wasPressedThisFrame || kb.numpad3Key.wasPressedThisFrame) SetMode(CameraMode.Trainer2);
-                if (kb.digit4Key.wasPressedThisFrame || kb.numpad4Key.wasPressedThisFrame) SetMode(CameraMode.BattleCenter);
-                if (kb.digit5Key.wasPressedThisFrame || kb.numpad5Key.wasPressedThisFrame) SetMode(CameraMode.CinematicOrbit);
+                if (kb.f1Key.wasPressedThisFrame) SetMode(CameraMode.FollowPlayer);
+                if (kb.f2Key.wasPressedThisFrame) SetMode(CameraMode.Broadcast);
+                if (kb.f3Key.wasPressedThisFrame) SetMode(CameraMode.Trainer1);
+                if (kb.f4Key.wasPressedThisFrame) SetMode(CameraMode.Trainer2);
+                if (kb.f5Key.wasPressedThisFrame) SetMode(CameraMode.BattleCenter);
+                if (kb.f6Key.wasPressedThisFrame) SetMode(CameraMode.CinematicOrbit);
             }
 #elif ENABLE_LEGACY_INPUT_MANAGER
-            if (Input.GetKeyDown(KeyCode.C)) SetMode(CameraMode.FollowPlayer);
-            if (Input.GetKeyDown(KeyCode.Alpha1)) SetMode(CameraMode.Broadcast);
-            if (Input.GetKeyDown(KeyCode.Alpha2)) SetMode(CameraMode.Trainer1);
-            if (Input.GetKeyDown(KeyCode.Alpha3)) SetMode(CameraMode.Trainer2);
-            if (Input.GetKeyDown(KeyCode.Alpha4)) SetMode(CameraMode.BattleCenter);
-            if (Input.GetKeyDown(KeyCode.Alpha5)) SetMode(CameraMode.CinematicOrbit);
+            if (Input.GetKeyDown(KeyCode.F1)) SetMode(CameraMode.FollowPlayer);
+            if (Input.GetKeyDown(KeyCode.F2)) SetMode(CameraMode.Broadcast);
+            if (Input.GetKeyDown(KeyCode.F3)) SetMode(CameraMode.Trainer1);
+            if (Input.GetKeyDown(KeyCode.F4)) SetMode(CameraMode.Trainer2);
+            if (Input.GetKeyDown(KeyCode.F5)) SetMode(CameraMode.BattleCenter);
+            if (Input.GetKeyDown(KeyCode.F6)) SetMode(CameraMode.CinematicOrbit);
 #endif
         }
 
@@ -240,19 +253,21 @@ namespace PokemonArena
 
         private void OnGUI()
         {
-            GUILayout.BeginArea(new Rect(15, 15, 230, 280), "Arena Camera Controls", GUI.skin.window);
+            if (!showCameraUI) return;
+
+            GUILayout.BeginArea(new Rect(Screen.width - 245, 15, 230, 260), "Arena Camera Controls", GUI.skin.window);
             GUILayout.Space(5);
 
-            if (GUILayout.Button("[C] Follow Character")) SetMode(CameraMode.FollowPlayer);
-            if (GUILayout.Button("[1] Broadcast Overview")) SetMode(CameraMode.Broadcast);
-            if (GUILayout.Button("[2] Trainer 1 (Red)")) SetMode(CameraMode.Trainer1);
-            if (GUILayout.Button("[3] Trainer 2 (Blue)")) SetMode(CameraMode.Trainer2);
-            if (GUILayout.Button("[4] Side Duel View")) SetMode(CameraMode.BattleCenter);
-            if (GUILayout.Button("[5] Cinematic Orbit")) SetMode(CameraMode.CinematicOrbit);
+            if (GUILayout.Button("[F1] Follow Character")) SetMode(CameraMode.FollowPlayer);
+            if (GUILayout.Button("[F2] Broadcast Overview")) SetMode(CameraMode.Broadcast);
+            if (GUILayout.Button("[F3] Trainer 1 (Red)")) SetMode(CameraMode.Trainer1);
+            if (GUILayout.Button("[F4] Trainer 2 (Blue)")) SetMode(CameraMode.Trainer2);
+            if (GUILayout.Button("[F5] Side Duel View")) SetMode(CameraMode.BattleCenter);
+            if (GUILayout.Button("[F6] Cinematic Orbit")) SetMode(CameraMode.CinematicOrbit);
 
             GUILayout.Space(8);
             GUILayout.Label($"Active: <b>{currentMode}</b>", GetRichLabelStyle());
-            GUILayout.Label("<size=10>Press [C] or [1-5] to switch views</size>", GetRichLabelStyle());
+            GUILayout.Label("<size=10>Press [F1-F6] to switch views</size>", GetRichLabelStyle());
 
             GUILayout.EndArea();
         }

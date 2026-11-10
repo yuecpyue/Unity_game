@@ -69,9 +69,21 @@ namespace PokemonArena
             }
 
             GUI.backgroundColor = new Color(0.2f, 0.7f, 1.0f);
-            if (GUILayout.Button("🏃 Add / Respawn Fast Run Player (WASD)", GUILayout.Height(32)))
+            if (GUILayout.Button("🏃 Add / Respawn Seven Bone Player (WASD)", GUILayout.Height(32)))
             {
                 SevenBoneCharacterSetup.SetupSevenBonePlayerInCurrentScene(saveScene: true);
+            }
+
+            GUI.backgroundColor = new Color(0.3f, 0.9f, 0.4f);
+            if (GUILayout.Button("🐸 Add / Respawn Forg Bone Player (WASD)", GUILayout.Height(32)))
+            {
+                ForgBoneCharacterSetup.SetupForgBonePlayerInCurrentScene(saveScene: true);
+            }
+
+            GUI.backgroundColor = new Color(0.95f, 0.75f, 0.2f);
+            if (GUILayout.Button("🎮 Setup Dual Character Switch System (seven_bone ⟷ forg_bone)", GUILayout.Height(34)))
+            {
+                CharacterSwitchEditorWindow.SetupDualCharacterInActiveScene(saveScene: true);
             }
 
             GUI.backgroundColor = Color.white;
