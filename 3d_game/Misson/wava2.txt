@@ -1,0 +1,27 @@
+[回合制 - 階段二] 戰鬥動作位移、Animator 連動與受擊閃白
+
+
+任務目標（Phase 2：延續上一階段的 BattleSystem 與 BattleUnit，加入視覺動作）
+
+請幫我擴充現有腳本，實作以下功能：
+
+1. **Animator 連動**：角色的 Animator 內包含 `Attack`（Trigger）與 `Hit`（Trigger）參數。發動攻擊與受擊時觸發對應動畫。
+
+2. **近戰衝刺與退回（Scripted Movement）**：
+
+   - 在 `BattleUnit.cs` 記錄初始座標 `startPosition`。
+
+   - 執行近戰攻擊時，使用協程讓角色平順移動到敵人前方 1.5 公尺處 -> 觸發 `Attack` 動畫 -> 等待 0.5 秒敵人扣血 -> 平順退回 `startPosition`。
+
+3. **受擊閃白回饋（Hit Flash）**：
+
+   - 因為模型沒有臉部表情，請在 `BattleUnit.cs` 實作受擊閃白協程：受擊時抓取模型身上的 `SkinnedMeshRenderer` 或 `MeshRenderer`，在 0.15 秒內將材質顏色（`_BaseColor` 或 `_Color`）變為純白再恢復原色。
+
+
+輸出要求
+
+1. 標示出需要修改或新增的程式碼區塊（附繁體中文註解）。
+
+2. 說明在 Unity Inspector 中需要綁定哪些 Renderer 元件。
+
+

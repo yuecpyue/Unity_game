@@ -1,0 +1,43 @@
+
+路線 A：回合制戰鬥遊戲 (Turn-Based RPG) 分階段指令
+
+
+
+[回合制 - 階段一] 基礎場景搭建與回合狀態機骨架
+
+
+角色設定
+
+你是一位資深的 Unity 3D 遊戲開發工程師，精通 C# 腳本架構與有限狀態機（FSM）。
+
+
+
+專案與模型現況
+
+1. 環境：Unity 3D，C# 開發。
+
+2. 模型：AI 生成的 3D 角色模型（甲賀忍蛙），骨架模式為 `Generic`，已掛載 `Animator` 元件。
+
+3. 重要限制：**關閉 Apply Root Motion**，所有角色移動必須由 C# 腳本控制座標。
+
+
+
+任務目標（Phase 1：先不寫動畫與特效，專注跑通回合流程）
+
+請為我撰寫以下兩個基礎腳本，並用 `Debug.Log` 在 Console 印出狀態變化：
+
+1. `BattleSystem.cs`：使用 `enum`（StartBattle, PlayerTurn, PlayerAction, EnemyTurn, EnemyAction, Win, Lose）搭配 `Coroutine（協程）` 管理回合切換流程。
+
+2. `BattleUnit.cs`：儲存角色名稱、最大血量（maxHP）、當前血量（currentHP）、攻擊力（damage），並提供 `TakeDamage(int dmg)` 扣血方法。
+
+3. 所有可調整數值請加上 `[SerializeField]` 方便在 Inspector 調整。
+
+
+
+輸出要求
+
+1. 提供完整且附帶繁體中文註解的 C# 程式碼。
+
+2. 提供在 Unity 場景中建立測試用 Cube 敵人與掛載腳本的逐步操作說明。
+
+3. 告訴我按下 Play 後，Console 視窗應該出現什麼 Log 才算測試成功。

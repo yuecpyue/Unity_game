@@ -1,0 +1,65 @@
+====================================================================
+Unity 3D 數位孿生資料綁定 — 即時天氣連動回合制屬性加成 AI 實作指令
+資料來源：中央氣象署開放資料平臺 (CWA API: O-A0003-001)
+適用對象：ChatGPT / Claude / Cursor / Copilot
+====================================================================
+
+# 角色設定
+你是一位資深的 Unity 3D 遊戲與數位孿生工程師，精通 C# 網路非同步請求（UnityWebRequest）、JSON 資料解析（JsonUtility）、TextMeshPro UI 顯示，以及回合制戰鬥的屬性倍率系統設計。
+
+# 專案背景與技術規範（嚴格遵守，避免常見錯誤）
+1. **開發環境**：Unity 3D (URP 管線)，UI 文字統一使用 `TextMeshProUGUI`（需引入 `TMPro` 命名空間）。
+2. **字型避坑規範（極重要）**：由於 Unity TextMeshPro 預設字型不包含中文字元，直接輸出中文天氣描述（如「陰」、「雨」）會變成方塊（□□□）。請務必撰寫一個轉換函式，將 API 抓到的中文天氣描述轉換為**英文**顯示在 UI 上（例如：包含「雨」轉為 `Rainy`、包含「晴」轉為 `Sunny`、包含「陰」或「雲」轉為 `Cloudy`、其餘轉為 `Normal`）。
+3. **中央氣象署（CWA）新版 API 規格（嚴禁使用舊版 `TEMP`/`HUMD` 欄位）**：
+   - **API 網址格式**：`https://opendata.cwa.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization={apiKey}&StationName={stationName}`（注意：測站名稱預設使用 `"臺北"`，不是 `"台北"`）。
+   - **JSON 實際結構（必須嚴格對應此四層結構建立 `[System.Serializable]` 類別）**：
+     ```json
+     {
+       "records": {
+         "Station": [
+           {
+             "StationName": "臺北",
+             "ObsTime": { "DateTime": "2026-11-17T14:00:00+08:00" },
+             "WeatherElement": {
+               "Weather": "陰",
+               "AirTemperature": 21.3,
+               "RelativeHumidity": 78
+             }
+           }
+         ]
+       }
+     }
+     ```
+4. **輪詢頻率限制**：定時輪詢（Polling）間隔預設設為 `300f`（300 秒），並提供 `[ContextMenu("Refresh Now")]` 方便在 Inspector 右鍵手動立即刷新。
+
+# 任務目標：實作「即時天氣連動回合制屬性加成系統」
+請為我設計一套模組化的 C# 腳本，包含以下三個核心功能：
+
+### 1. 資料模型 (`CwaModels.cs`)
+- 依據上述 JSON 第四層結構建立對應的 C# 序列化類別（`CwaResponse`、`Records`、`Station`、`ObsTime`、`WeatherElement`），欄位名稱與大小寫必須與 JSON 完全一致。
+
+### 2. 天氣抓取與屬性倍率計算器 (`WeatherBattleManager.cs`)
+- **Inspector 可調參數**：
+  - `string apiKey`（CWA 授權碼）
+  - `string stationName = "臺北"`
+  - `bool useLocalFile = false`（勾選時改從 `Application.streamingAssetsPath + "/weather.json"` 讀取本機測試檔，方便沒有網路或想手動模擬下雨時測試）
+  - `float pollInterval = 300f`
+  - `TextMeshProUGUI weatherStatusText`（顯示於 Unity 畫面上的 UI 文字元件）
+- **天氣判定與屬性加成邏輯（供回合制戰鬥讀取）**：
+  - 提供公開屬性 `public float WaterDamageMultiplier { get; private set; }`（水屬性傷害倍率）與 `public float FireDamageMultiplier { get; private set; }`（火屬性傷害倍率）。
+  - **判定規則**：
+    - 若 `Weather` 包含 `"雨"`（Rainy）：**水屬性傷害加成 1.5 倍（`1.5f`）**，火屬性降為 `0.8f`。
+    - 若 `Weather` 包含 `"晴"`（Sunny）：**火屬性傷害加成 1.5 倍（`1.5f`）**，水屬性降為 `0.8f`。
+    - 其他天氣（陰、多雲等）：水與火屬性皆為正常 `1.0f`。
+- **畫面 UI 文字更新與變色提示**：
+  - 將抓到的資訊以英文格式化顯示在 `weatherStatusText` 上，內容包含：**測站英文名/代碼、目前天氣（如 `Rainy`）、氣溫、濕度，以及當前的屬性加成狀態（例如：`[BUFF] Water Skill DMG x1.5!`）**。
+  - 當觸發水屬性加成（雨天）時，將 `weatherStatusText.color` 變為**青藍色（`Color.cyan`）**；火屬性加成（晴天）時變為**橘紅色（`new Color(1f, 0.4f, 0f)`）**；無加成時為**白色（`Color.white`）**。
+
+### 3. 回合制戰鬥技能傷害測試腳本 (`BattleWeatherTest.cs`)
+- 寫一個簡單的測試腳本掛載在場景中，包含基礎水屬性技能傷害（如 `baseWaterDamage = 100`）。
+- 提供一個公開方法 `public void CastWaterShuriken()` 供 Unity UI Button 綁定：按下按鈕時，讀取 `WeatherBattleManager` 的 `WaterDamageMultiplier`，計算最終傷害（`最終傷害 = 基礎傷害 * 水屬性倍率`），並將計算結果（例如：`Cast Water Shuriken! Weather: Rainy -> Final DMG: 150`）更新顯示在畫面的另一個 `TextMeshProUGUI battleLogText` 上。
+
+# 輸出要求
+1. 請依序提供 `CwaModels.cs`、`WeatherBattleManager.cs`、`BattleWeatherTest.cs` 的完整、無報錯 C# 程式碼（附上繁體中文註解）。
+2. 提供一份**本機測試用的 `weather.json` 範例內容**，並說明該放在 Unity 專案的哪個路徑。
+3. 提供在 Unity 場景中建立 Canvas、TextMeshPro 介面、Button 與掛載腳本的**逐步操作清單**。

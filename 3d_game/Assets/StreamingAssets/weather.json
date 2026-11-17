@@ -1,0 +1,17 @@
+{
+  "records": {
+    "Station": [
+      {
+        "StationName": "臺北",
+        "ObsTime": {
+          "DateTime": "2026-11-17T14:00:00+08:00"
+        },
+        "WeatherElement": {
+          "Weather": "雨",
+          "AirTemperature": 20.5,
+          "RelativeHumidity": 85
+        }
+      }
+    ]
+  }
+}

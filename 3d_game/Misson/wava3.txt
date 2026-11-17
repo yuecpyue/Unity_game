@@ -1,0 +1,20 @@
+[回合制 - 階段三] 遠距離投射物（水手裡劍）與 UI 按鈕控制
+
+
+任務目標（Phase 3：加入技能選擇 UI 與遠距離攻擊投射物）
+
+請為我實作最後階段的完整互動體驗：
+
+1. `Projectile.cs`（投射物腳本）：掛載在水手裡劍 Prefab 上，生成後朝目標敵人直線飛行，碰撞或抵達目標距離時造成傷害、銷毀自身。
+
+2. **雙招式選擇**：在 `BattleSystem.cs` 中實作 `OnMeleeAttackButton()`（近戰衝刺）與 `OnRangedAttackButton()`（原地發射水手裡劍）兩個 Public 方法。
+
+3. **UI 狀態鎖定與血條**：
+
+   - 只有在 `PlayerTurn` 狀態下，UI 攻擊按鈕才可以點擊（`interactable = true`），行動期間自動鎖定按鈕。
+
+   - 建立簡易的 UI 血條（Slider）更新邏輯，讓玩家與敵人扣血時畫面上的血條同步減少。
+
+輸出要求
+
+1. 提供完整程式碼與 UI Canvas（Button、Slider）在 Unity 中的建立與事件綁定教學。
