@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1920
     height: 987
   m_ShowMode: 4
-  m_Title: Inspector
+  m_Title: Hierarchy
   m_RootView: {fileID: 6}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -69,8 +69,8 @@ MonoBehaviour:
     y: 0
     width: 454
     height: 931
-  m_MinSize: {x: 276, y: 76}
-  m_MaxSize: {x: 4001, y: 4026}
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 15}
   m_Panes:
   - {fileID: 15}
@@ -669,7 +669,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/model/Materials
+    - Assets/Scenes
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -679,7 +679,7 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 53
   m_LastFolders:
-  - Assets/model/Materials
+  - Assets/Scenes
   m_LastFoldersGridSize: 53
   m_LastProjectPath: C:\Users\Administrator\Desktop\Unity_game\3d_game
   m_LockTracker:
@@ -688,20 +688,22 @@ MonoBehaviour:
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs:
-    - m_Data: 72468
+    - m_Data: 73098
     m_LastClickedID:
-      m_Data: 72468
+      m_Data: 73098
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 72208
-    - m_Data: 72212
-    - m_Data: 99070
+    - m_Data: 73088
+    - m_Data: 73092
+    - m_Data: 111240
+    - m_Data: 111308
+    - m_Data: 111332
     - m_Data: 1000000000
     - m_Data: 2147483647
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: model
-      m_OriginalName: model
+      m_Name: 
+      m_OriginalName: 
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
@@ -709,10 +711,10 @@ MonoBehaviour:
         width: 0
         height: 0
       m_UserData:
-        m_Data: 72212
+        m_Data: 0
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 0
+      m_OriginalEventType: 11
       m_IsRenamingFilename: 1
       m_TrimLeadingAndTrailingWhitespace: 0
       m_ClientGUIView: {fileID: 5}
@@ -755,9 +757,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs:
-    - m_Data: -156928
-    m_LastClickedInstanceID: -156928
+    m_SelectedInstanceIDs: []
+    m_LastClickedInstanceID: 0
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: []
     m_RenameOverlay:
@@ -881,20 +882,17 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs:
-      - m_Data: -156928
+      m_SelectedIDs: []
       m_LastClickedID:
-        m_Data: -156928
+        m_Data: 0
       m_ExpandedIDs:
-      - m_Data: -156906
-      - m_Data: -156874
-      - m_Data: -140736
-      - m_Data: -137700
-      - m_Data: -55434
+      - m_Data: -128504
+      - m_Data: -100798
+      - m_Data: -57416
       m_RenameOverlay:
         m_UserAcceptedRename: 0
-        m_Name: tip2
-        m_OriginalName: tip2
+        m_Name: 
+        m_OriginalName: 
         m_EditFieldRect:
           serializedVersion: 2
           x: 0
@@ -902,10 +900,10 @@ MonoBehaviour:
           width: 0
           height: 0
         m_UserData:
-          m_Data: -142848
+          m_Data: 0
         m_IsWaitingForDelay: 0
         m_IsRenaming: 0
-        m_OriginalEventType: 0
+        m_OriginalEventType: 11
         m_IsRenamingFilename: 0
         m_TrimLeadingAndTrailingWhitespace: 0
         m_ClientGUIView: {fileID: 4}
@@ -1300,6 +1298,20 @@ MonoBehaviour:
       layout: 4
       size: {x: 0, y: 0}
       sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: XR Building Blocks
+      index: 12
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
     m_ContainerData:
     - containerId: overlay-toolbar__top
       scrollOffset: 0
@@ -1343,9 +1355,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: 552.3248, y: -18.408333, z: 721.77985}
+    m_Target: {x: 0.09607594, y: 5.512334, z: -1.5902759}
     speed: 2
-    m_Value: {x: 552.3248, y: -18.408333, z: 721.77985}
+    m_Value: {x: 0.09607594, y: 5.512334, z: -1.5902759}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1395,9 +1407,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0.14496867, y: -0.015729073, z: 0.0023054103, w: 0.98930854}
   m_Size:
-    m_Target: 780.5506
+    m_Target: 17.02523
     speed: 2
-    m_Value: 780.5506
+    m_Value: 17.827467
   m_Ortho:
     m_Target: 0
     speed: 2
